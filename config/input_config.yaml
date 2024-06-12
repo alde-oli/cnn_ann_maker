@@ -1,0 +1,17 @@
+data_management:
+  output_data_path: "./data/output.csv" # Path to save the processed data
+  batch_size: 32 # Number of samples per batch (e.g., 16, 32, 64)
+  shuffle: true # Whether to shuffle the data during training (true or false)
+  validation_split: 0.2 # Fraction of data to use for validation (e.g., 0.1, 0.2)
+
+preprocessing:
+  normalization: "none" # Type of normalization (options: "none", "standard", "minmax")
+  augmentation: # Data augmentation techniques
+    flip: false # Flip images horizontally (true or false)
+    rotation: 0 # Rotate images by degrees (e.g., 0, 90, 180)
+  flatten: false # Whether to flatten the input data (true or false) (for images, matrices, etc.)
+
+data_pipeline:
+#  cache_data: false # Whether to cache data for faster access (true or false)
+  #num_workers: 4 # Number of workers for data loading (e.g., 2, 4, 8)
+  use_gpu: true # Whether to use GPU for data loading (true or false)

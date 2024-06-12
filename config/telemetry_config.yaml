@@ -1,0 +1,20 @@
+logging:
+  log_level: "INFO" # Logging level (options: "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL")
+  log_file: "./logs/training.log" # Path to the log file
+
+model_saving:
+  save_model: true # Whether to save the model (true or false)
+  save_path: "./models/neuron_model.csv" # Path to save the model
+  save_format: "h5" # Format to save the model (options: "h5", "tf")
+
+checkpointing:
+  enable_checkpoints: true # Whether to enable model checkpointing (true or false)
+  checkpoint_path: "./models/checkpoint/neuron_checkpoint.csv" # Path to save checkpoints
+  checkpoint_interval: 5 # Interval (in epochs) to save checkpoints (e.g., 1, 5, 10)
+
+visualization:
+  plot_input_data: true # Whether to plot input data (true or false)
+  plot_accuracy: true # Whether to plot accuracy (true or false)
+  plot_loss: true # Whether to plot loss (true or false)
+  enable_tensorboard: true # Whether to enable TensorBoard visualization (true or false)
+  tensorboard_log_dir: "./tensorboard_logs" # Directory to save TensorBoard logs

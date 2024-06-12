@@ -1,0 +1,4 @@
+matrix,type
+datasets/m1.csv,0
+datasets/m2.csv,1
+datasets/m3.csv,2
