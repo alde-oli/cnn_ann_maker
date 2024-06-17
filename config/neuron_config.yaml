@@ -1,54 +1,83 @@
-layer1:
-  amount: 128 # Number of neurons in the layer (e.g., 128, 256, 512)
-  weight_initialization: "xavier" # options: "random", "xavier", "he"
-  bias_initialization: 0.0 # Initial bias value (e.g., 0.0, 0.1)
+data:
+	batch_size: 32 # Number of samples per batch (e.g., 16, 32, 64)
+	shuffle: true # Whether to shuffle the data during training (true or false)
+	validation_split: 0.2 # Fraction of data to use for validation (e.g., 0.1, 0.2)
 
-  activation_function:
-    type: "sigmoid" # options: "sigmoid", "relu", "leaky_relu", "tanh", "elu", "softmax"
-    leaky_relu_alpha: 0.01 # (Leaky ReLU only)
-
-  error_function: "cross_entropy" # options: "mean_squared_error", "cross_entropy"
-
-  gradient_descent:
-    method: "adam" # options: "sgd", "adam", "rmsprop", "momentum"
-    learning_rate: 0.001 # (e.g., 0.01, 0.001, 0.0001)
-    momentum: 0.9 # Momentum factor (Momentum only)
-    beta1: 0.9 # (Adam only)
-    beta2: 0.999 # (Adam only)
-    epsilon: 1e-7 # (Adam only)
-
-  regularization:
-    l1: 0.0 # L1 regularization factor (e.g., 0.0, 0.01)
-    l2: 0.01 # L2 regularization factor (e.g., 0.0, 0.01)
-  #  dropout_rate: 0.5 # Dropout rate (e.g., 0.0, 0.5)
+	normalization: "none" # Type of normalization (options: "none", "standard", "minmax")
+	augmentation: # Data augmentation techniques
+		flip: false # Flip images horizontally (true or false)
+		rotation: 0 # Rotate images by degrees (e.g., 0, 90, 180)
+	flatten: false # Whether to flatten the input data (true or false) (for images, matrices, etc.)
 
 
-layer2:
-  amount: 64
-  weight_initialization: "xavier"
-  bias_initialization: 0.0
+use_gpu: true # Whether to use GPU for data loading (true or false)
 
-  activation_function:
-    type: "relu"
-    leaky_relu_alpha: 0.01
-  
-  error_function: "cross_entropy"
 
-  gradient_descent:
-    method: "adam"
-    learning_rate: 0.001
-    momentum: 0.9
-    beta1: 0.9
-    beta2: 0.999
-    epsilon: 1e-7
+layers:
+	1:
+		amount: 128 # Number of neurons in the layer (e.g., 128, 256, 512)
+		weight_init: "xavier" # options: "random", "xavier", "he"
+		bias_init: 0.0 # Initial bias value (e.g., 0.0, 0.1) or "random"
 
-  regularization:
-    l1: 0.0
-    l2: 0.01
-  #  dropout_rate: 0.5
+		activation:
+			type: "sigmoid" # options: "sigmoid", "relu", "leaky_relu", "tanh", "elu", "softmax"
+			leaky_relu_alpha: 0.01 # (Leaky ReLU only)
 
-# add more layers as needed
+		regularization:
+			l1: 0.0 # L1 regularization factor (e.g., 0.0, 0.01)
+			l2: 0.01 # L2 regularization factor (e.g., 0.0, 0.01)
+			dropout_rate: 0.5 # Dropout rate (e.g., 0.0, 0.5)
+
+	2:
+		amount: 64
+		weight_init: "xavier"
+		bias_init: 0.0
+
+		activation:
+			type: "relu"
+			leaky_relu_alpha: 0.01
+
+		regularization:
+			l1: 0.0
+			l2: 0.01
+
+	# add more layers as needed
+
+
+error_function: "cross_entropy" 
+
+gradient_descent:
+	method: "adam" # options: "sgd", "adam", "rmsprop", "momentum" 
+	learning_rate: 0.001 # (e.g., 0.01, 0.001, 0.0001)
+	momentum: 0.9 # Momentum factor (Momentum only)
+	beta1: 0.9 # (Adam only)
+	beta2: 0.999 # (Adam only)
+	epsilon: 1e-7 # (Adam only)
 
 training:
-  epochs: 100 # Number of training epochs (e.g., 10, 100, 1000)
-  batch_size: 32 # Number of samples per batch (e.g., 16, 32, 64)
+  optimizer: "adam" # options: "sgd", "adam", "rmsprop", "momentum" 
+  loss: "categorical_crossentropy" # options: "mean_squared_error", "cross_entropy", "binary_cross_entropy", "categorical_cross_entropy"
+  metrics: ["accuracy"]
+  batch_size: 32
+  epochs: 10
+  validation_split: 0.2
+
+
+save_path: "./models/" # Path to save the model
+
+checkpointing:
+	enable: true # Whether to enable model checkpointing (true or false)
+	path: "./models/checkpoint/" # Path to save checkpoints
+	interval: 5 # Interval (in epochs) to save checkpoints (e.g., 1, 5, 10)
+
+
+logging:
+	log_level: "INFO" # Logging level (options: "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL")
+	log_file: "./logs/training.log" # Path to the log file
+
+visualization:
+	plot_input_data: true # Whether to plot input data (true or false)
+	plot_accuracy: true # Whether to plot accuracy (true or false)
+	plot_loss: true # Whether to plot loss (true or false)
+	enable_tensorboard: true # Whether to enable TensorBoard visualization (true or false)
+	tensorboard_log_dir: "./tensorboard_logs" # Directory to save TensorBoard logs
