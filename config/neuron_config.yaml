@@ -21,7 +21,7 @@ layers:
 
 		activation:
 			type: "sigmoid" # options: "sigmoid", "relu", "leaky_relu", "tanh", "elu", "softmax"
-			leaky_relu_alpha: 0.01 # (Leaky ReLU only)
+			leaky__alpha: 0.01 # (Leaky ReLU and Leaky ELU only)
 
 		regularization:
 			l1: 0.0 # L1 regularization factor (e.g., 0.0, 0.01)

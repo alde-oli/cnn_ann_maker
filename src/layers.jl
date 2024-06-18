@@ -14,10 +14,10 @@ end
 
 # Function: Applies a nonlinear function.
 # Utility: Allows the network to model nonlinear relationships.
-# Input: 1D vector
+# Input: 1D vector	
 # Output: 1D vector
 struct Activation <: Layer
-	activation::Function
+	activation::String
 	alpha::Float64 # for LeakyReLU
 end
 
