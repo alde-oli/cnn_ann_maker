@@ -61,7 +61,7 @@ function normalize_data(data, normalization::String, use_gpu::Bool)
             return (data .- min_vals) ./ (max_vals .- min_vals)
         end
     elseif isa(data, Array)
-        Threads.@threads for i in 1:length(data)
+        Threads.@threads eachindex(data) do i
             if normalization == "standard"
                 data[i] = use_gpu ? CUDA.fill((data[i] .- mean(data[i])) ./ std(data[i])) : (data[i] .- mean(data[i])) ./ std(data[i])
             elseif normalization == "minmax"
@@ -111,7 +111,7 @@ end
 
 function flatten_data(data, use_gpu::Bool)
     flattened_data = Vector{Any}(undef, length(data))
-    Threads.@threads for i in 1:length(data)
+    Threads.@threads eachindex(data) do i
         flattened_data[i] = use_gpu ? CUDA.fill(vec(data[i])) : vec(data[i])
     end
     return flattened_data

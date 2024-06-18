@@ -4,41 +4,41 @@ abstract type Layer end
 
 # Function: Linear transformation with weights and biases.
 # Utility: Each neuron is connected to all neurons of the previous layer.
-# Input: 1D vector
-# Output: 1D vector
+# Input: 2D tensor (batch_size, input_features)
+# Output: 2D tensor (batch_size, output_features)
 struct Dense <: Layer
-	weights::Array{Float64,2}
-	bias::Array{Float64,1}
+	weights::Array{Float32,2}
+	biases::Array{Float32,1}
 end
 
 
 # Function: Applies a nonlinear function.
 # Utility: Allows the network to model nonlinear relationships.
-# Input: 1D vector	
-# Output: 1D vector
+# Input: 2D tensor (batch_size, input_features) or same as previous layer
+# Output: Same as input
 struct Activation <: Layer
 	activation::String
-	alpha::Float64 # for LeakyReLU
+	leaky_alpha::Float32
+	dimension::Int
 end
 
 
 # Function: Randomly ignores a fraction of neurons during training.
 # Utility: Prevents overfitting.
-# Input: 1D vector
-# Output: 1D vector
+# Input: 2D tensor (batch_size, input_features) or same as previous layer
+# Output: Same as input
 struct Dropout <: Layer
-	ratio::Float64
+	probability::Float32
+	mask::union{Nothing, AbstractArray{Bool}}
 end
 
 
 # Function: Normalizes activations of each batch.
 # Utility: Speeds up training and stabilizes the network.
-# Input: 1D vector
-# Output: 1D vector
+# Input: 2D tensor (batch_size, input_features) or same as previous layer
+# Output: Same as input
 struct BatchNormalization <: Layer
-	epsilon::Float64
-	gamma::Array{Float64,1}
-	beta::Array{Float64,1}
+	
 end
 
 
@@ -47,14 +47,13 @@ end
 # Input: N/A (defines the shape of the model's input)
 # Output: Depends on the definition
 struct InputLayer <: Layer
-	shape::Tuple
 end
 
 
 # Function: Flattens input data into a 1D vector.
 # Utility: Prepares data for dense layers.
-# Input: 2D matrix or 3D tensor
-# Output: 1D vector
+# Input: Any shape (commonly 3D or 4D tensor)
+# Output: 2D tensor (batch_size, flattened_features)
 struct Flatten <: Layer
 end
 
@@ -64,34 +63,30 @@ end
 # Input: Any shape
 # Output: New specified shape
 struct Reshape <: Layer
-	shape::Tuple
 end
 
 
 # Function: Adds Gaussian noise to input data.
 # Utility: Improves model robustness.
-# Input: 1D vector
-# Output: 1D vector
+# Input: Any shape
+# Output: Same as input
 struct GaussianNoise <: Layer
-	stddev::Float64
 end
 
 
 # Function: Multiplies inputs by random Gaussian variables.
 # Utility: Prevents overfitting.
-# Input: 1D vector
-# Output: 1D vector
+# Input: Any shape
+# Output: Same as input
 struct GaussianDropout <: Layer
-	ratio::Float64
 end
 
 
 # Function: Preserves SELU activation properties after dropout.
 # Utility: Used with SELU activations.
-# Input: 1D vector
-# Output: 1D vector
+# Input: Any shape
+# Output: Same as input
 struct AlphaDropout <: Layer
-	ratio::Float64
 end
 
 
@@ -100,11 +95,6 @@ end
 # Input: 4D tensor (batch_size, height, width, channels)
 # Output: 4D tensor (batch_size, new_height, new_width, filters)
 struct Conv2D <: Layer
-	filters::Int
-	kernel_size::Tuple{Int,Int}
-	strides::Tuple{Int,Int}
-	padding::String
-	activation::Function
 end
 
 
@@ -113,9 +103,6 @@ end
 # Input: 4D tensor (batch_size, height, width, channels)
 # Output: 4D tensor (batch_size, pooled_height, pooled_width, channels)
 struct MaxPooling2D <: Layer
-	pool_size::Tuple{Int,Int}
-	strides::Tuple{Int,Int}
-	padding::String
 end
 
 
@@ -124,9 +111,6 @@ end
 # Input: 4D tensor (batch_size, height, width, channels)
 # Output: 4D tensor (batch_size, pooled_height, pooled_width, channels)
 struct AveragePooling2D <: Layer
-	pool_size::Tuple{Int,Int}
-	strides::Tuple{Int,Int}
-	padding::String
 end
 
 
@@ -135,11 +119,6 @@ end
 # Input: 3D tensor (batch_size, sequence_length, channels)
 # Output: 3D tensor (batch_size, new_length, filters)
 struct Conv1D <: Layer
-	filters::Int
-	kernel_size::Int
-	strides::Int
-	padding::String
-	activation::Function
 end
 
 
@@ -148,11 +127,6 @@ end
 # Input: 5D tensor (batch_size, depth, height, width, channels)
 # Output: 5D tensor (batch_size, new_depth, new_height, new_width, filters)
 struct Conv3D <: Layer
-	filters::Int
-	kernel_size::Tuple{Int,Int,Int}
-	strides::Tuple{Int,Int,Int}
-	padding::String
-	activation::Function
 end
 
 
