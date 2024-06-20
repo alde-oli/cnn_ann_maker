@@ -6,7 +6,7 @@ abstract type Layer end
 # Utility: Each neuron is connected to all neurons of the previous layer.
 # Input: 2D tensor (batch_size, input_features)
 # Output: 2D tensor (batch_size, output_features)
-struct Dense <: Layer
+mutable struct Dense <: Layer
 	weights::Array{Float32,2}
 	biases::Array{Float32,1}
 end
@@ -14,12 +14,12 @@ end
 
 # Function: Applies a nonlinear function.
 # Utility: Allows the network to model nonlinear relationships.
-# Input: 2D tensor (batch_size, input_features) or same as previous layer
+# Input: same as previous layer
 # Output: Same as input
 struct Activation <: Layer
-	activation::String
-	leaky_alpha::Float32
-	dimension::Int
+	activation::String # "sigmoid", "tanh", "relu", "elu", "leaky_relu", "softmax"
+	leaky_alpha::Float32 # slope for leaky ReLU and ELU
+	dimension::Int # dimension for softmax
 end
 
 
@@ -27,9 +27,9 @@ end
 # Utility: Prevents overfitting.
 # Input: 2D tensor (batch_size, input_features) or same as previous layer
 # Output: Same as input
-struct Dropout <: Layer
-	probability::Float32
-	mask::union{Nothing, AbstractArray{Bool}}
+mutable struct Dropout <: Layer
+	probability::Float32 # probability of dropping out a neuron (0.0 to 1.0)
+	mask::Union{Nothing, AbstractArray{Bool}} # to store the dropout mask for backpropagation
 end
 
 
@@ -37,8 +37,15 @@ end
 # Utility: Speeds up training and stabilizes the network.
 # Input: 2D tensor (batch_size, input_features) or same as previous layer
 # Output: Same as input
-struct BatchNormalization <: Layer
-	
+mutable struct BatchNormalization <: Layer
+	gamma::Array{Float32,1} # scale factor
+	beta::Array{Float32,1} # shift factor
+	mean::Array{Float32,1} 
+	variance::Array{Float32,1} 
+	epsilon::Float32 # small value to avoid division by zero
+	moving_mean::Array{Float32,1}
+	moving_variance::Array{Float32,1}
+	momentum::Float32	
 end
 
 
@@ -47,6 +54,7 @@ end
 # Input: N/A (defines the shape of the model's input)
 # Output: Depends on the definition
 struct InputLayer <: Layer
+	shape::Array{Int,1}
 end
 
 

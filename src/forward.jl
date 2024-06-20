@@ -12,14 +12,14 @@ end
 
 # Function: Applies a nonlinear function.
 # Utility: Allows the network to model nonlinear relationships.
-# Input: 2D tensor (batch_size, input_features) or same as previous layer
+# Input: same as previous layer
 # Output: Same as input
-function forward(layer::Activation, input)
+function forward(layer::Activation, input::AbstractArray)::AbstractArray
 	if (layer.activation == "leaky_relu") || (layer.activation == "elu")
 		return layer.activation_functions[layer.activation].(input, layer.alpha)
-	else if layer.activation == "softmax"
+	elseif layer.activation == "softmax"
 		return layer.activation_functions[layer.activation](input, layer.dimension)
-	else if haskey(layer.activation_functions, layer.activation)
+	elseif haskey(layer.activation_functions, layer.activation)
 		return layer.activation_functions[layer.activation].(input)
 	else
 		error("Activation function not found.")
@@ -31,13 +31,13 @@ end
 # Utility: Prevents overfitting.
 # Input: 2D tensor (batch_size, input_features) or same as previous layer
 # Output: Same as input
-function forward(layer::Dropout, input::AbstractArray; training::Bool=true)
+function forward(layer::Dropout, input::AbstractArray; training::Bool=true)::AbstractArray
 	if !training || layer.probability == 0.0
 		return input
-	else if layer.probability == 1.0
+	elseif layer.probability == 1.0
 		error("Dropout probability is 1.0, division by zero.")
 	end
-	layer.mask = rand(size(input)) .< layer.probability
+	layer.mask = rand(size(input)...) .< layer.probability
 	scaled_input = input .* layer.mask
 	output = scaled_input / (1.0 - layer.probability)
 	
@@ -50,7 +50,7 @@ end
 # Utility: Speeds up training and stabilizes the network.
 # Input: 2D tensor (batch_size, input_features) or same as previous layer
 # Output: Same as input
-function forward(layer::BatchNormalization, input)
+function forward(layer::BatchNormalization, input::AbstractArray)::AbstractArray
 	
 end
 
