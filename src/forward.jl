@@ -32,8 +32,10 @@ end
 # Input: 2D tensor (batch_size, input_features) or same as previous layer
 # Output: Same as input
 function forward(layer::Dropout, input::AbstractArray; training::Bool=true)
-	if !training
+	if !training || layer.probability == 0.0
 		return input
+	else if layer.probability == 1.0
+		error("Dropout probability is 1.0, division by zero.")
 	end
 	layer.mask = rand(size(input)) .< layer.probability
 	scaled_input = input .* layer.mask
@@ -49,6 +51,7 @@ end
 # Input: 2D tensor (batch_size, input_features) or same as previous layer
 # Output: Same as input
 function forward(layer::BatchNormalization, input)
+	
 end
 
 
