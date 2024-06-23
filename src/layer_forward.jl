@@ -1,12 +1,12 @@
-include("layers.jl")
+include("layer_struct.jl")
 include("activation.jl")
 
 # Function: Linear transformation with weights and biases.
 # Utility: Each neuron is connected to all neurons of the previous layer.
 # Input: 2D tensor (batch_size, input_features)
 # Output: 2D tensor (batch_size, output_features)
-function forward(layer::Dense, input::Array{Float32,1})::Array{Float32,1}
-	return layer.weights * input .+ layer.biases
+function forward(layer::Dense, input::AbstractArray)::AbstractArray
+	
 end
 
 
@@ -50,9 +50,22 @@ end
 # Utility: Speeds up training and stabilizes the network.
 # Input: 2D tensor (batch_size, input_features) or same as previous layer
 # Output: Same as input
-function forward(layer::BatchNormalization, input::AbstractArray)::AbstractArray
+function forward(layer::BatchNormalization, input::AbstractArray, training::Bool=true)::AbstractArray
+	if training
+		mean = mean(input, dims=layer.dimension)
+		variance = var(input, dims=layer.dimension)
+		layer.moving_mean = layer.momentum * layer.moving_mean .+ (1.0 - layer.momentum) * mean
+		layer.moving_variance = layer.momentum * layer.moving_variance .+ (1.0 - layer.momentum) * variance
+	else
+		mean = layer.moving_mean
+		variance = layer.moving_variance
+	end
+	normalized_input = (input .- mean) ./ sqrt.(variance .+ layer.epsilon)
+	output = layer.gamma .* normalized_input .+ layer.beta
 	
+	return output
 end
+
 
 
 # Function: Defines the shape of input data.
